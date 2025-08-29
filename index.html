@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub 加速下载</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        recommend: '#36D399'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-primary text-white py-4">
+        <div class="container mx-auto px-4 flex items-center">
+            <i class="fa fa-github text-2xl mr-2"></i>
+            <h1 class="text-xl font-bold">GitHub 加速下载</h1>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 max-w-lg">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="mb-4">
+                <label for="github-url" class="block text-sm font-medium text-gray-700 mb-1">GitHub 链接</label>
+                <input 
+                    type="text" 
+                    id="github-url" 
+                    placeholder="https://github.com/用户名/仓库名" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                >
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">可用加速服务</label>
+                <div class="space-y-2">
+                    <div class="flex items-center p-2 border border-recommend rounded-md bg-recommend/5">
+                        <input type="radio" id="service1" name="service" value="https://ghproxy.net/" checked class="accent-primary">
+                        <label for="service1" class="ml-2">ghproxy.net <span class="text-xs bg-recommend text-white px-1.5 py-0.5 rounded ml-2">推荐</span></label>
+                    </div>
+                    <div class="flex items-center p-2 border border-gray-200 rounded-md">
+                        <input type="radio" id="service2" name="service" value="https://gh.ddlc.top/">
+                        <label for="service2" class="ml-2">gh.ddlc.top</label>
+                    </div>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/90 transition-colors">
+                生成加速链接
+            </button>
+        </div>
+
+        <div id="result-container" class="hidden bg-white rounded-lg shadow p-6">
+            <div class="flex">
+                <input 
+                    type="text" 
+                    id="result-url" 
+                    readonly 
+                    class="flex-grow px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none"
+                >
+                <button id="copy-btn" class="bg-gray-100 hover:bg-gray-200 px-4 border border-l-0 border-gray-300 rounded-r-md transition-colors">
+                    <i class="fa fa-copy"></i>
+                </button>
+            </div>
+            <div id="copy-alert" class="hidden mt-2 text-sm text-green-600">
+                <i class="fa fa-check"></i> 已复制到剪贴板
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-12 py-4 text-center text-gray-500 text-sm">
+        <p>若服务不可用，请尝试切换其他选项</p>
+    </footer>
+
+    <script>
+        const githubUrlInput = document.getElementById('github-url');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultUrlInput = document.getElementById('result-url');
+        const copyBtn = document.getElementById('copy-btn');
+        const copyAlert = document.getElementById('copy-alert');
+
+        generateBtn.addEventListener('click', () => {
+            const url = githubUrlInput.value.trim();
+            if (!url) {
+                alert('请输入GitHub链接');
+                return;
+            }
+
+            if (!url.startsWith('https://github.com/')) {
+                alert('请输入有效的GitHub链接');
+                return;
+            }
+
+            const selectedService = document.querySelector('input[name="service"]:checked').value;
+            const acceleratedUrl = selectedService + url;
+            
+            resultUrlInput.value = acceleratedUrl;
+            resultContainer.classList.remove('hidden');
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        copyBtn.addEventListener('click', () => {
+            resultUrlInput.select();
+            document.execCommand('copy');
+            copyAlert.classList.remove('hidden');
+            setTimeout(() => copyAlert.classList.add('hidden'), 2000);
+        });
+
+        githubUrlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateBtn.click();
+        });
+    </script>
+</body>
+</html>
